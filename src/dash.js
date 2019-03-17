@@ -51,7 +51,7 @@ function dash(project) {
         for(let ev of evs) {
           await this.observer.pay(ev.data); 
           config[project].fromBlock = ev.data.blockNumber;
-          await fs.writeFile(__dirname+'/config.json',JSON.stringify(config,null,2));
+          await fs.writeFile('../config.json',JSON.stringify(config,null,2));
         } 
       } catch(err) {
         var mailgun = require('mailgun-js')(config.api.mailgun);
