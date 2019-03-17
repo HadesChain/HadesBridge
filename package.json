@@ -1,0 +1,16 @@
+{
+  "name": "HadesBridge",
+  "private": false,
+  "version": "0.1.0",
+  "description": "Relay assests between two EVM-based blockchain networks",
+  "repository": "https://github.com/HadesChain/HadesBridge.git",
+  "license": "LGPL",
+  "scripts": {
+    "start": "node bridge.js"
+  },
+  "dependencies": {
+    "watch-eth": "~0.0.1-beta",
+    "ethereumjs-tx": "^1.3.7",
+    "mailgun-js": "^0.22.0"
+  }
+}

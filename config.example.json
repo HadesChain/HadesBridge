@@ -1,0 +1,30 @@
+{
+  "eth": {
+    "provider": "...rpcServer.",
+    "contract": "...contract address",
+    "fromBlock": <integer>, // watching start point
+    "owner": "...address which created contract",
+    "pk": "....Private key"
+  },
+  "hdc": {
+    "provider": "...rpcServer.",
+    "contract": "...contract address",
+    "fromBlock": <integer>, // watching start point
+    "owner": "...address which created contract",
+    "pk": "....Private key"
+  },
+  "abi": // abi of contract, 
+  "api": {
+    "ethPrice": "",
+    "mailgun": {
+      "apiKey": "...",
+      "domain": "..."
+    },
+    "mailbody": {
+      "from": "Alarm <alarm@xx.org>",
+      "to": "xx@yy.com",
+      "subject": "error happend",
+      "text": ""
+    }
+  }
+}
