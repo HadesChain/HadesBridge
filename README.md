@@ -1,6 +1,6 @@
 # Hades Bridge
 The Hades Bridge allows users to transfer assets between two chains in the Ethereum ecosystem. 
-
+<b>Live Version: [https://explorer.hadeschain.org](https://explorer.hadeschain.org)</b>
 ## Bridge Overview
 
 The bridge oracle is deployed on specified validator nodes (only nodes whose private keys correspond to addresses specified in the smart contracts) in the network. The oracle connects to two chains via a Remote Procedure Call (RPC). It is responsible for:
