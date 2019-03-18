@@ -1,5 +1,6 @@
 # Hades Bridge
 The Hades Bridge allows users to transfer assets between two chains in the Ethereum ecosystem. 
+
 <b>Live Version: [https://www.hadeschain.org/bridge.html](https://www.hadeschain.org/bridge.html)</b>
 ## Bridge Overview
 
