@@ -69,9 +69,7 @@ function dash(project) {
     if(e.removed!==false || e.returnValues.value=='0') {
       return Promise.resolve('pass');
     }
-    
-    let ins =  this.provider.web3.eth.Contract(config.abi,c.contract);
-    let rawTx = {
+    var rawTx = {
                  from : c.owner,
                  nonce: '',
                  gasPrice: '0x77359400',
@@ -79,19 +77,8 @@ function dash(project) {
                  value: '0x0',
                  data: ''};
 
-
-    return ins.methods.isPay(e.transactionHash).call().then((isPay)=>{
-      console.log(isPay);
-      if(isPay) {
-        return Promise.reject('don\'t pay duplicate for tx '+e.transactionHash);
-      } else {
-        return Promise.resolve(isPay);
-      } 
-    }).then(()=>{
-
-      return this.provider.web3.eth.getTransactionCount(c.owner,'pending')
-
-    }).then((nonce)=>{
+    return this.provider.web3.eth.getTransactionCount(c.owner,'pending')
+    .then((nonce)=>{
       rawTx.nonce = this.provider.web3.utils.toHex(nonce);
       console.log(nonce)
       return Promise.resolve(nonce);
@@ -110,17 +97,19 @@ function dash(project) {
       }
     }).then((value)=>{
        value = this.provider.web3.utils.toHex(parseInt(value));
+       var ins =  this.provider.web3.eth.Contract(config.abi,c.contract);
        rawTx.data = ins.methods.send(e.returnValues.sender,value,e.transactionHash).encodeABI();
        return this.provider.web3.eth.estimateGas(rawTx);
     }).then((gasLimit)=>{
        rawTx.gasLimit = this.provider.web3.utils.toHex(gasLimit);
        return Promise.resolve(rawTx);
     }).then((rawTx)=>{
-
+       console.log(rawTx);
        const privateKey = Buffer.from(c.pk, 'hex')
        const tx = new Tx(rawTx);
        tx.sign(privateKey);
 
+       const serializedTx = tx.serialize();
        return this.provider.web3.eth.sendSignedTransaction('0x' + tx.serialize().toString('hex'));
     });
     
