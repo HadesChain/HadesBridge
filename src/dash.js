@@ -8,11 +8,11 @@ const fs = require('fs').promises;
 
 var config = {};
 try {
-  config = require('../config.json');
+  config = require(appRoot+'/config.json');
 } catch(e) {
   if (e.code == 'MODULE_NOT_FOUND') {
     console.log('No config file found. Using default configuration... (config.example.json)');
-    config = require('../config.example.json');
+    config = require(appRoot+'/config.example.json');
   } else {
     throw e;
     process.exit(1);
@@ -51,7 +51,7 @@ function dash(project) {
         for(let ev of evs) {
           await this.observer.pay(ev.data); 
           config[project].fromBlock = ev.data.blockNumber;
-          await fs.writeFile('../config.json',JSON.stringify(config,null,2));
+          await fs.writeFile(appRoot+'/config.json',JSON.stringify(config,null,2));
         } 
       } catch(err) {
         var mailgun = require('mailgun-js')(config.api.mailgun);
