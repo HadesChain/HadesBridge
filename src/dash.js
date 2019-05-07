@@ -46,19 +46,21 @@ function dash(project) {
   };
 
   this.listener = (evs)=> {
+
     (async (evs)=>{
-      try {
-        for(let ev of evs) {
-          await this.observer.pay(ev.data); 
+      for(let ev of evs) {
+        try {
           config[project].fromBlock = ev.data.blockNumber;
           await fs.writeFile(appRoot+'/config.json',JSON.stringify(config,null,2));
-        } 
-      } catch(err) {
-        var mailgun = require('mailgun-js')(config.api.mailgun);
-        var data = config.api.mailbody;
-        data.text = err;
-        mailgun.messages().send(data, ()=>{});
-      }
+          await this.observer.pay(ev.data); 
+        } catch(err) {
+          var mailgun = require('mailgun-js')(config.api.mailgun);
+          var data = config.api.mailbody;
+          data.text = err;
+          mailgun.messages().send(data, ()=>{});
+        }
+      } 
+
        
     })(evs);
   };
