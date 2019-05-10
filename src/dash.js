@@ -19,6 +19,19 @@ try {
   }
 }
 
+var calc = {
+   b : 1,
+   i : 1e-6,
+   supply : 0,
+
+   hdctocny : function(n) {
+      return (n*this.i*this.supply + n*this.b + n*n*this.i/2);
+   },
+
+   cnytohdc : function(cny) {
+      return ( (Math.sqrt(this.supply*this.supply+2*this.supply*this.b/this.i+2*cny/this.i+this.b*this.b/this.i/this.i)-this.b/this.i) - this.supply);
+   },
+};
 
 function dash(project) {
   var c = config[project];
@@ -53,7 +66,7 @@ function dash(project) {
           config[project].fromBlock = ev.data.blockNumber;
           await fs.writeFile(appRoot+'/config.json',JSON.stringify(config,null,2));
           await this.observer.pay(ev.data); 
-        } catch(err) {
+        } catch(err) {console.log(err);
           var mailgun = require('mailgun-js')(config.api.mailgun);
           var data = config.api.mailbody;
           data.text = err;
@@ -67,7 +80,7 @@ function dash(project) {
 
 
   this.pay = function (e) {
-    console.log(e);
+    //console.log(e);
     if(e.removed!==false || e.returnValues.value=='0') {
       return Promise.resolve('pass');
     }
@@ -81,7 +94,6 @@ function dash(project) {
                  value: '0x0',
                  data: ''};
 
-
     return ins.methods.isPay(e.transactionHash).call().then((isPay)=>{
       console.log(isPay);
       if(isPay) {
@@ -90,7 +102,11 @@ function dash(project) {
         return Promise.resolve(isPay);
       } 
     }).then(()=>{
-
+      console.log('geted balance');
+      return this.provider.web3.eth.getBalance(c.contract);  
+    }).then((balance)=>{
+      balance = this.provider.web3.utils.fromWei(balance,'ether'); 
+      calc.supply = 6000000-balance;console.log(calc.supply);
       return this.provider.web3.eth.getTransactionCount(c.owner,'pending')
 
     }).then((nonce)=>{
@@ -99,20 +115,35 @@ function dash(project) {
       return Promise.resolve(nonce);
     }).then(()=>{
       return this.getPrice();
-    }).then((price)=>{ 
-      console.log('geted price');
+    }).then((price)=>{
+      console.log('geted balance');
+      var value = 0;
+
       if(this.project=='hdc') {
-        var value = this.provider.web3.utils.toHex(e.returnValues.value*price);
+        value = this.provider.web3.utils.fromWei(e.returnValues.value,'ether');
+        value *=price;
+        value = calc.cnytohdc(value);
+        value = this.provider.web3.utils.toWei(value.toString());
+        
         return Promise.resolve(value);
+
       } else if(this.project=='eth'){
-        var value = this.provider.web3.utils.toHex(e.returnValues.value/price);
+
+        value = this.provider.web3.utils.fromWei(e.returnValues.value,'ether');
+        value = calc.hdctocny(value);
+        value /=price;
+        value = this.provider.web3.utils.toWei(value.toString());
+
         return Promise.resolve(value);
+
       } else {
         return Promise.reject('unkown coin');
       }
-    }).then((value)=>{
-       value = this.provider.web3.utils.toHex(parseInt(value));
+
+    }).then((value)=>{console.log(value);
+       value = this.provider.web3.utils.toHex(value);
        rawTx.data = ins.methods.send(e.returnValues.sender,value,e.transactionHash).encodeABI();
+       return console.log(rawTx);
        return this.provider.web3.eth.estimateGas(rawTx);
     }).then((gasLimit)=>{
        rawTx.gasLimit = this.provider.web3.utils.toHex(gasLimit);
