@@ -143,7 +143,6 @@ function dash(project) {
     }).then((value)=>{console.log(value);
        value = this.provider.web3.utils.toHex(value);
        rawTx.data = ins.methods.send(e.returnValues.sender,value,e.transactionHash).encodeABI();
-       return console.log(rawTx);
        return this.provider.web3.eth.estimateGas(rawTx);
     }).then((gasLimit)=>{
        rawTx.gasLimit = this.provider.web3.utils.toHex(gasLimit);
