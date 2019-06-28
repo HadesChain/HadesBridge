@@ -173,11 +173,11 @@ function dash(project) {
       }, 
      
       function (error, response, body) {
-        if (!error && response.statusCode === 200 && body.status===true) {
-          rate.price = body.docs[0].price; 
+        if (!error && response.statusCode === 200 && body.success===true && body.data.length>0) {
+          rate.price = body.data[0].price; 
           rate.update = parseInt( (new Date()).getTime()/1000 );
 
-          resolve(body.docs[0].price);
+          resolve(rate.price);
         } else {
           reject('get price error '+error); 
         } 
