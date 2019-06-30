@@ -106,7 +106,7 @@ function dash(project) {
       return this.provider.web3.eth.getBalance(c.contract);  
     }).then((balance)=>{
       balance = this.provider.web3.utils.fromWei(balance,'ether'); 
-      calc.supply = 6000000-balance;console.log(calc.supply);
+      calc.supply = 20000000-balance;console.log(calc.supply);
       return this.provider.web3.eth.getTransactionCount(c.owner,'pending')
 
     }).then((nonce)=>{
